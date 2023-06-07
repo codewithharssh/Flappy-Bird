@@ -22,7 +22,7 @@ font-family: 'Luckiest Guy', cursive;
 .wrapper{
 height:600px;  
 width:350px;
-background:url("images/Background.jpg");
+background:url("Background.jpg");
 position:absolute;
 top:50%;
 left:50%;
@@ -108,11 +108,11 @@ text-transform:uppercase;
 
 <body>
 <div class="wrapper">
-  <img src="images/Ground.png" id="ground"> 
+  <img src="Ground.png" id="ground"> 
   <div class="bird">
-      <img src="images/Flappy.png">
+      <img src="Flappy.png">
   </div>
-  <img src="images/GameLogo.png" class="game-icon">
+  <img src="GameLogo.png" class="game-icon">
   <span class="score">0</span>
   <span class="guide-text">Press anywhere to start</span>
 </div>
@@ -177,8 +177,8 @@ let birdJump =()=>{
 let generatePipes =()=>{
  let bottomPipeImg = document.createElement('img');
  let topPipeImg = document.createElement('img');
- bottomPipeImg.src = 'images/Pipe.jpg';
- topPipeImg.src = 'images/Pipe.jpg'        
+ bottomPipeImg.src = 'Pipe.jpg';
+ topPipeImg.src = 'Pipe.jpg'        
  //Bottom Pipe     
  let pipeLeft = 290;
  let bottomPipe = document.createElement('div');
