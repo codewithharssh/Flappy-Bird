@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title></title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Luckiest+Guy&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+*{
+margin:0; 
+padding:0;
+box-sizing:border-box;
+} 
+
+body{
+background:white;  
+font-family: 'Luckiest Guy', cursive;
+}
+
+.wrapper{
+height:600px;  
+width:350px;
+background:url("images/Background.jpg");
+position:absolute;
+top:50%;
+left:50%;
+transform:translate(-50%,-50%);
+background-repeat:no-repeat;
+background-size:cover;
+overflow:hidden;
+border-radius:3px;
+}
+
+.wrapper #ground{
+position:absolute;
+bottom:0px;
+height:630px;
+width:100%;
+z-index:1;
+}
+
+.wrapper .bird{
+height:45px;
+width:45px;
+position:absolute;
+bottom:300px;
+left:20px;
+transition:all .1s;
+}
+
+.wrapper .bird img{
+height:45px;
+width:45px;
+}
+
+.bottomPipe,.topPipe{
+height:300px; 
+width:50px;
+position:absolute;
+}
+
+.bottomPipe img,.topPipe img{
+height:310px;   
+width:200px;
+position:relative;
+left:-75px;
+}
+
+.topPipe img{
+transform:rotate(180deg);        
+}
+
+.wrapper .score{
+position:absolute; 
+top:100px;
+left:50%;
+transform:translate(-50%,-50%);
+font-size:35px;
+z-index:1;
+color:white;
+text-shadow:3px 2px #000;
+}
+
+.wrapper .game-icon{
+height:60px;        
+width:200px;
+position:absolute;
+top:100px;
+left:50%;
+transform:translate(-50%, -50%);
+}
+
+.wrapper .guide-text{
+position:absolute;   
+left:50%;
+bottom:70px;
+transform:translate(-50%,-50%);
+white-space:nowrap;
+font-family: 'Press Start 2P', cursive;
+z-index:1;
+font-size:7px;
+text-transform:uppercase;
+}
+</style>        
+</head>
+
+<body>
+<div class="wrapper">
+  <img src="images/Ground.png" id="ground"> 
+  <div class="bird">
+      <img src="images/Flappy.png">
+  </div>
+  <img src="images/GameLogo.png" class="game-icon">
+  <span class="score">0</span>
+  <span class="guide-text">Press anywhere to start</span>
+</div>
+
+<script>
+let bird = document.querySelector('.wrapper .bird');
+let wrapper = document.querySelector('.wrapper');
+let scoreText = document.querySelector('.wrapper .score');
+let gameIcon = document.querySelector('.wrapper .game-icon');
+let guideText = document.querySelector('.wrapper .guide-text');
+scoreText.style.display = 'none';
+
+let gamePlay = false;
+let birdBottom = 300;
+let birdLeft = 20;
+let gravity = 3;
+let gap = 400;
+let startId;
+let isGameOver = false;
+let score = 0;
+let restart = false;
+
+wrapper.addEventListener('click',()=>{
+ if(!gamePlay){
+    startGame();     
+    scoreText.style.display = 'block';
+    gameIcon.style.display = "none";
+    guideText.style.display = 'none';
+ }   
+ gamePlay = true;
+ if(!isGameOver){
+ birdJump();
+ }
+ if(restart){
+    window.location.reload();   
+ }
+})
+
+let startGame =()=>{
+  birdDown();
+  if(!isGameOver){
+  generatePipes();
+  }
+  startId = setInterval(birdDown, 20);
+}
+
+let birdDown =()=>{
+ birdBottom -= gravity;
+ bird.style.bottom = birdBottom + 'px';
+ bird.style.left = birdLeft + 'px';
+ if(birdBottom === 38){
+    gameOver();   
+ }
+}
+
+let birdJump =()=>{
+ birdBottom += 55;
+ bird.style.bottom = birdBottom + 'px';
+ bird.style.left = birdLeft + 'px';
+}
+
+let generatePipes =()=>{
+ let bottomPipeImg = document.createElement('img');
+ let topPipeImg = document.createElement('img');
+ bottomPipeImg.src = 'images/Pipe.jpg';
+ topPipeImg.src = 'images/Pipe.jpg'        
+ //Bottom Pipe     
+ let pipeLeft = 290;
+ let bottomPipe = document.createElement('div');
+ let randomHeight = Math.floor(Math.random() * 65);
+ let pipeBottom = randomHeight;
+ bottomPipe.style.bottom = pipeBottom + 'px';
+ bottomPipe.style.left = pipeLeft + 'px';
+ if(!isGameOver){
+     bottomPipe.classList.add('bottomPipe');
+     bottomPipe.appendChild(bottomPipeImg);
+ }
+ wrapper.appendChild(bottomPipe)
+ 
+ //Top Pipe
+ let topPipe = document.createElement('div');
+ topPipe.style.bottom = pipeBottom + gap + 'px';
+ topPipe.style.left = pipeLeft + 'px';
+ if(!isGameOver){
+   topPipe.classList.add('topPipe');
+   topPipe.appendChild(topPipeImg);
+ }
+ wrapper.appendChild(topPipe)
+ 
+ //Move pipe
+ let movePipe =()=>{
+  if(!isGameOver){      
+   pipeLeft -= 2;
+   bottomPipe.style.left = pipeLeft + 'px'
+   topPipe.style.left = pipeLeft + 'px';
+   if(pipeLeft === 0){
+       getScore(); 
+   }
+  }
+   
+   if(pipeLeft > 0 && pipeLeft <= 50 && birdLeft == 20 && (birdBottom < pipeBottom + 270 || birdBottom > pipeBottom + gap -30) || birdBottom === 38){
+       gameOver();    
+   }
+ }
+ let timerId = setInterval(movePipe,20)
+ if(!isGameOver) setTimeout(generatePipes,1800)
+ 
+ if(pipeLeft === -20){
+   clearInterval(timerId);
+   wrapper.removeChild(bottomPipe);
+   wrapper.removeChild(topPipe);
+ }
+}
+
+let gameOver =()=>{
+  isGameOver = true;      
+  clearInterval(startId);  
+  restart = true;
+}
+
+let getScore =()=>{
+ score++;
+ scoreText.innerHTML = score;
+}
+</script>
+</body>
+
+</html>
